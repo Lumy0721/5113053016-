@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 日本中部縱走 & 即時觀賽手冊</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            padding: 16px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .day-nav {
+            display: flex;
+            overflow-x: auto;
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 8px 0;
+        }
+
+        .day-btn {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: none;
+            background-color: #e9ecef;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .day-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 16px 0;
+        }
+
+        /* 動態天氣資訊卡 */
+        .weather-card {
+            background: linear-gradient(135deg, #e0f7fa 0%, #fff3e0 100%);
+            border: 1px solid #b2ebf2;
+            border-radius: var(--border-radius);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weather-status {
+            font-size: 0.9rem;
+            color: #00796b;
+            font-weight: bold;
+        }
+
+        .loading-spinner {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .traffic-alert-card {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            border-radius: var(--border-radius);
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+        }
+
+        .btn-refresh {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>2026 日本中部觀賽與旅遊即時手冊</h2>
+</header>
+
+<div class="day-nav">
+    <button class="day-btn active" onclick="loadDay('2026-09-23', 35.1815, 136.9064, '名古屋', this)">9/23 (三)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-24', 35.1815, 136.9064, '名古屋', this)">9/24 (四)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-25', 35.7333, 137.5000, '惠那峽/長野', this)">9/25 (五)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-26', 36.5772, 137.5956, '立山黑部室堂', this)">9/26 (六)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-27', 36.1408, 137.2513, '高山/金澤', this)">9/27 (日)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-28', 35.1815, 136.9064, '名古屋', this)">9/28 (一)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-29', 35.0844, 136.8836, '名古屋港區', this)">9/29 (二)</button>
+    <button class="day-btn" onclick="loadDay('2026-09-30', 35.1815, 136.9064, '名古屋/機場', this)">9/30 (三)</button>
+</div>
+
+<div class="container">
+    <!-- 即時氣象面板 -->
+    <div class="weather-card">
+        <div>
+            <div id="location-name" class="weather-status">📍 正在取得即時天氣...</div>
+            <div id="weather-detail" class="loading-spinner">發送數據請求中...</div>
+            <button class="btn-refresh" onclick="fetchLiveWeather()">🔄 重新抓取最新天氣</button>
+        </div>
+        <div id="weather-icon" style="font-size: 2rem;">🌤️</div>
+    </div>
+
+    <!-- 即時交通提示面板 -->
+    <div class="traffic-alert-card">
+        <strong>⚠️ 即時交通狀態查驗連結：</strong>
+        <ul>
+            <li><a href="https://top.meitetsu.co.jp/" target="_blank">名鐵電車即時運行狀況</a></li>
+            <li><a href="https://traininfo.jr-central.co.jp/zairaisen/index.html?lang=ja" target="_blank">JR 東海在來線運行情報</a></li>
+            <li><a href="https://www.alpen-route.com/index.php" target="_blank">立山黑部即時纜車與交通營運狀態</a></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    let currentLat = 35.1815;
+    let currentLng = 136.9064;
+    let currentLocName = '名古屋';
+    let currentDate = '2026-09-23';
+
+    // 每次開啟網頁或切換日期時自動觸發 API 抓取
+    function loadDay(dateStr, lat, lng, locName, btnElement) {
+        currentDate = dateStr;
+        currentLat = lat;
+        currentLng = lng;
+        currentLocName = locName;
+
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+        if (btnElement) btnElement.classList.add('active');
+
+        fetchLiveWeather();
+    }
+
+    // 發送抓取 Open-Meteo 即時氣象 API 請求
+    async function fetchLiveWeather() {
+        const detailElem = document.getElementById('weather-detail');
+        const locElem = document.getElementById('location-name');
+        
+        locElem.innerHTML = `📍 當前地點：${currentLocName}`;
+        detailElem.innerHTML = '⏱️ 正在向日本氣象數據庫查詢最新預報...';
+
+        try {
+            // Open-Meteo API 網址 (包含每日最高/最低溫與降雨機率)
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLng}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+
+            // 取得預報數據
+            const dates = data.daily.time;
+            const dateIndex = dates.indexOf(currentDate);
+
+            if (dateIndex !== -1) {
+                const maxTemp = data.daily.temperature_2m_max[dateIndex];
+                const minTemp = data.daily.temperature_2m_min[dateIndex];
+                const rainProb = data.daily.precipitation_probability_max[dateIndex];
+
+                detailElem.innerHTML = `最高溫：<strong>${maxTemp}°C</strong>｜最低溫：<strong>${minTemp}°C</strong>｜降雨機率：<strong>${rainProb}%</strong>`;
+            } else {
+                // 若超出 API 免費預報天數（通常預報 7~14 天內），顯示即時氣候說明
+                detailElem.innerHTML = `預報日尚未進入即時 14 天預報期，請於出發前一週點擊更新。`;
+            }
+        } catch (error) {
+            detailElem.innerHTML = `❌ 無法取得即時氣象數據，請檢查網路連線。`;
+        }
+    }
+
+    // 網頁首次載入時自動執行
+    window.onload = function() {
+        fetchLiveWeather();
+    };
+</script>
+
+</body>
+</html>
