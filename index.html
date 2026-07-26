@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 日本中部縱走 & 即時觀賽手冊</title>
+    <title>2026 日本中部縱走 & 名古屋觀賽手冊</title>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -15,7 +15,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -29,12 +29,18 @@
             background-color: var(--primary-color);
             color: white;
             width: 100%;
-            padding: 16px 0;
+            padding: 18px 0;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
         }
 
         .day-nav {
@@ -43,7 +49,13 @@
             width: 100%;
             max-width: 600px;
             background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             padding: 8px 0;
+            scrollbar-width: none;
+        }
+
+        .day-nav::-webkit-scrollbar {
+            display: none;
         }
 
         .day-btn {
@@ -52,9 +64,12 @@
             margin: 0 4px;
             border: none;
             background-color: #e9ecef;
+            color: #495057;
             border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .day-btn.active {
@@ -65,150 +80,405 @@
         .container {
             width: 90%;
             max-width: 600px;
-            margin: 16px 0;
+            margin: 16px 0 40px 0;
         }
 
-        /* 動態天氣資訊卡 */
+        .day-content {
+            display: none;
+        }
+
+        .day-content.active {
+            display: block;
+        }
+
         .weather-card {
             background: linear-gradient(135deg, #e0f7fa 0%, #fff3e0 100%);
             border: 1px solid #b2ebf2;
             border-radius: var(--border-radius);
-            padding: 14px 16px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .weather-status {
-            font-size: 0.9rem;
-            color: #00796b;
-            font-weight: bold;
-        }
-
-        .loading-spinner {
-            font-size: 0.85rem;
-            color: #888;
-        }
-
-        .traffic-alert-card {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            border-radius: var(--border-radius);
             padding: 12px 16px;
             margin-bottom: 16px;
-            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .btn-refresh {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .weather-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #00796b;
+        }
+
+        .weather-detail {
+            font-size: 0.85rem;
+            color: #444;
+            margin-top: 4px;
+        }
+
+        .weather-icon {
+            font-size: 1.8rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-left: 10px;
+            flex-grow: 1;
+        }
+
+        .checkbox-custom {
+            width: 22px;
+            height: 22px;
             cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+
+        .item-done {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            color: white;
+            margin-right: 6px;
+        }
+
+        .bg-spot { background-color: #3498db; }
+        .bg-transport { background-color: #f39c12; }
+        .bg-food { background-color: #2ecc71; }
+        .bg-hotel { background-color: #9b59b6; }
+
+        .btn-link {
+            display: inline-block;
+            margin-top: 8px;
+            margin-right: 8px;
+            padding: 6px 12px;
             font-size: 0.8rem;
-            margin-top: 6px;
+            text-decoration: none;
+            color: #333;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-link:hover { background-color: #e0e0e0; }
+        .btn-maps { color: #1a73e8; border-color: #1a73e8; background-color: #e8f0fe; }
+        .btn-timetable { color: #d93025; border-color: #d93025; background-color: #fce8e6; }
+
+        .info-text {
+            font-size: 0.9rem;
+            color: #555;
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+
+        .transport-connector {
+            border-left: 3px dashed #cbd5e1;
+            margin: -8px 0 12px 24px;
+            padding: 8px 0 8px 16px;
+            font-size: 0.85rem;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h2>2026 日本中部觀賽與旅遊即時手冊</h2>
+    <h1>2026 日本中部縱走 & 觀賽手冊</h1>
 </header>
 
 <div class="day-nav">
-    <button class="day-btn active" onclick="loadDay('2026-09-23', 35.1815, 136.9064, '名古屋', this)">9/23 (三)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-24', 35.1815, 136.9064, '名古屋', this)">9/24 (四)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-25', 35.7333, 137.5000, '惠那峽/長野', this)">9/25 (五)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-26', 36.5772, 137.5956, '立山黑部室堂', this)">9/26 (六)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-27', 36.1408, 137.2513, '高山/金澤', this)">9/27 (日)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-28', 35.1815, 136.9064, '名古屋', this)">9/28 (一)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-29', 35.0844, 136.8836, '名古屋港區', this)">9/29 (二)</button>
-    <button class="day-btn" onclick="loadDay('2026-09-30', 35.1815, 136.9064, '名古屋/機場', this)">9/30 (三)</button>
+    <button class="day-btn active" onclick="switchDay('d1')">9/23 (三)</button>
+    <button class="day-btn" onclick="switchDay('d2')">9/24 (四)</button>
+    <button class="day-btn" onclick="switchDay('d3')">9/25 (五)</button>
+    <button class="day-btn" onclick="switchDay('d4')">9/26 (六)</button>
+    <button class="day-btn" onclick="switchDay('d5')">9/27 (日)</button>
+    <button class="day-btn" onclick="switchDay('d6')">9/28 (一)</button>
+    <button class="day-btn" onclick="switchDay('d7')">9/29 (二)</button>
+    <button class="day-btn" onclick="switchDay('d8')">9/30 (三)</button>
 </div>
 
 <div class="container">
-    <!-- 即時氣象面板 -->
-    <div class="weather-card">
-        <div>
-            <div id="location-name" class="weather-status">📍 正在取得即時天氣...</div>
-            <div id="weather-detail" class="loading-spinner">發送數據請求中...</div>
-            <button class="btn-refresh" onclick="fetchLiveWeather()">🔄 重新抓取最新天氣</button>
+
+    <!-- Day 1 -->
+    <div id="d1" class="day-content active">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">🌤️ 日本氣象預測 - 名古屋地區</span>
+                <span class="weather-detail">氣溫：20°C ～ 27°C｜降雨機率：30%</span>
+            </div>
+            <div class="weather-icon">🌙</div>
         </div>
-        <div id="weather-icon" style="font-size: 2rem;">🌤️</div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-transport">飛行</span>
+                <span class="card-title">17:00 - 20:55 桃園機場 ✈️ 中部國際機場</span>
+            </div>
+            <p class="info-text">抵達後辦理入境手續與提領行李。</p>
+            <a href="https://www.centrair.jp/tch/timetable/index.html" target="_blank" class="btn-link btn-timetable">⏱️ 中部機場交通時刻表</a>
+        </div>
+
+        <div class="transport-connector">
+            🚌 搭乘名鐵特急（約 25~30 分鐘）前往金山站
+            <a href="https://www.meitetsu.co.jp/cht/train/timetable/" target="_blank" class="btn-link btn-timetable">⏱️ 名鐵列車時刻表</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-hotel">住宿</span>
+                <span class="card-title">【2】東橫INN 金山 Check-in</span>
+            </div>
+            <p class="info-text">預計 22:30 抵達辦理入住（已備註 Late Check-in）。</p>
+            <a href="https://maps.google.com/?q=Toyoko+Inn+Nagoya+Kanayama" target="_blank" class="btn-link btn-maps">📍 Google 地圖</a>
+        </div>
     </div>
 
-    <!-- 即時交通提示面板 -->
-    <div class="traffic-alert-card">
-        <strong>⚠️ 即時交通狀態查驗連結：</strong>
-        <ul>
-            <li><a href="https://top.meitetsu.co.jp/" target="_blank">名鐵電車即時運行狀況</a></li>
-            <li><a href="https://traininfo.jr-central.co.jp/zairaisen/index.html?lang=ja" target="_blank">JR 東海在來線運行情報</a></li>
-            <li><a href="https://www.alpen-route.com/index.php" target="_blank">立山黑部即時纜車與交通營運狀態</a></li>
-        </ul>
+    <!-- Day 2 -->
+    <div id="d2" class="day-content">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">☀️ 日本氣象預測 - 名古屋地區</span>
+                <span class="weather-detail">氣溫：19°C ～ 26°C｜降雨機率：30%</span>
+            </div>
+            <div class="weather-icon">🌤️</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">景點</span>
+                <span class="card-title">【3】大須觀音 & 商店街</span>
+            </div>
+            <a href="https://maps.google.com/?q=Osu+Kannon" target="_blank" class="btn-link btn-maps">📍 Google 地圖</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">景點</span>
+                <span class="card-title">【4】熱田神宮</span>
+            </div>
+            <a href="https://maps.google.com/?q=Atsuta+Jingu" target="_blank" class="btn-link btn-maps">📍 Google 地圖</a>
+        </div>
+
+        <div class="transport-connector">
+            🚌 15:30 搭乘 JR 東海道本線：熱田站 ➔ 笠寺站（約 5 分鐘，刷 IC 卡）
+            <a href="https://m.jr-central.co.jp/time/" target="_blank" class="btn-link btn-timetable">⏱️ JR 東海道本線時刻表</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">賽事</span>
+                <span class="card-title">【5】17:00 - 20:55 亞運體操賽事</span>
+            </div>
+            <a href="https://maps.google.com/?q=Nippon+Gaishi+Hall" target="_blank" class="btn-link btn-maps">📍 Google 地圖</a>
+        </div>
     </div>
+
+    <!-- Day 3 -->
+    <div id="d3" class="day-content">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">🌦️ 日本氣象預測 - 岐阜/長野地區</span>
+                <span class="weather-detail">氣溫：13°C ～ 22°C｜降雨機率：35%</span>
+            </div>
+            <div class="weather-icon">⛰️</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">跟團</span>
+                <span class="card-title">【10】惠那峽遊船 & 馬籠宿漫步</span>
+            </div>
+            <a href="https://maps.google.com/?q=Magome-juku" target="_blank" class="btn-link btn-maps">📍 馬籠宿地圖</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-hotel">住宿</span>
+                <span class="card-title">【11】大町溫泉鄉 / 安曇野飯店</span>
+            </div>
+            <a href="https://maps.google.com/?q=Omachi+Onsen" target="_blank" class="btn-link btn-maps">📍 Google 地圖</a>
+        </div>
+    </div>
+
+    <!-- Day 4 -->
+    <div id="d4" class="day-content">
+        <div class="weather-card" style="background: linear-gradient(135deg, #bbdefb 0%, #e1f5fe 100%);">
+            <div class="weather-info">
+                <span class="weather-title" style="color: #0277bd;">❄️ 日本氣象預測 - 立山黑部（高山區）</span>
+                <span class="weather-detail">氣溫：6°C ～ 14°C（體感寒冷）｜降雨機率：40%</span>
+            </div>
+            <div class="weather-icon">🏔️</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">跟團</span>
+                <span class="card-title">【12】立山黑部全天貫穿（室堂 2450m）</span>
+            </div>
+            <p class="info-text">請務必穿著羽絨外套與保暖配件。</p>
+            <a href="https://www.alpen-route.com/tw/timetable/" target="_blank" class="btn-link btn-timetable">⏱️ 立山黑部時刻表</a>
+            <a href="https://maps.google.com/?q=Murodo+Station" target="_blank" class="btn-link btn-maps">📍 室堂站地圖</a>
+        </div>
+    </div>
+
+    <!-- Day 5 -->
+    <div id="d5" class="day-content">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">🌥️ 日本氣象預測 - 金澤/飛驒地區</span>
+                <span class="weather-detail">氣溫：14°C ～ 22°C｜降雨機率：30%</span>
+            </div>
+            <div class="weather-icon">🍁</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">跟團</span>
+                <span class="card-title">【13】兼六園 & 【14】合掌村 & 【15】高山老街</span>
+            </div>
+            <a href="https://maps.google.com/?q=Kenroku-en" target="_blank" class="btn-link btn-maps">📍 兼六園地圖</a>
+            <a href="https://maps.google.com/?q=Shirakawa-go" target="_blank" class="btn-link btn-maps">📍 合掌村地圖</a>
+        </div>
+    </div>
+
+    <!-- Day 6 -->
+    <div id="d6" class="day-content">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">🌤️ 日本氣象預測 - 犬山 / 名古屋</span>
+                <span class="weather-detail">氣溫：18°C ～ 25°C｜降雨機率：25%</span>
+            </div>
+            <div class="weather-icon">🏯</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">跟團</span>
+                <span class="card-title">【16】犬山城 & 【17】常滑 AEON MALL</span>
+            </div>
+            <a href="https://maps.google.com/?q=Inuyama+Castle" target="_blank" class="btn-link btn-maps">📍 犬山城地圖</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-hotel">住宿</span>
+                <span class="card-title">【6】超級酒店 Premier 名古屋天然溫泉 櫻通口</span>
+            </div>
+            <a href="https://maps.google.com/?q=Super+Hotel+Premier+Nagoya+Ekimae" target="_blank" class="btn-link btn-maps">📍 飯店地圖</a>
+        </div>
+    </div>
+
+    <!-- Day 7 -->
+    <div id="d7" class="day-content">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">☀️ 日本氣象預測 - 名古屋/港區</span>
+                <span class="weather-detail">氣溫：18°C ～ 26°C｜降雨機率：20%</span>
+            </div>
+            <div class="weather-icon">🧗</div>
+        </div>
+
+        <div class="transport-connector">
+            🚌 09:15 搭乘清波線：名古屋車站 ➔ 金城埠頭車站（約 24~30 分鐘，350日圓）
+            <a href="https://www.aonambus.co.jp/taiwanese/" target="_blank" class="btn-link btn-timetable">⏱️ 清波線時刻表</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">賽事</span>
+                <span class="card-title">【7】10:00 - 13:15 亞運攀岩賽事</span>
+            </div>
+            <a href="https://maps.google.com/?q=Port+Messe+Nagoya" target="_blank" class="btn-link btn-maps">📍 Google 地圖</a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">景點</span>
+                <span class="card-title">【8】名古屋港水族館 & 【9】榮商圈</span>
+            </div>
+            <a href="https://maps.google.com/?q=Port+of+Nagoya+Public+Aquarium" target="_blank" class="btn-link btn-maps">📍 水族館地圖</a>
+        </div>
+    </div>
+
+    <!-- Day 8 -->
+    <div id="d8" class="day-content">
+        <div class="weather-card">
+            <div class="weather-info">
+                <span class="weather-title">☀️ 日本氣象預測 - 名古屋 / 空港</span>
+                <span class="weather-detail">氣溫：17°C ～ 25°C｜降雨機率：20%</span>
+            </div>
+            <div class="weather-icon">✈️</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <input type="checkbox" class="checkbox-custom" onchange="toggleDone(this)">
+                <span class="badge bg-spot">機場</span>
+                <span class="card-title">【1】中部國際機場 & 13:45 班機返家</span>
+            </div>
+            <a href="https://maps.google.com/?q=Chubu+Centrair+International+Airport" target="_blank" class="btn-link btn-maps">📍 機場地圖</a>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    let currentLat = 35.1815;
-    let currentLng = 136.9064;
-    let currentLocName = '名古屋';
-    let currentDate = '2026-09-23';
+    function switchDay(dayId) {
+        const contents = document.querySelectorAll('.day-content');
+        contents.forEach(content => content.classList.remove('active'));
 
-    // 每次開啟網頁或切換日期時自動觸發 API 抓取
-    function loadDay(dateStr, lat, lng, locName, btnElement) {
-        currentDate = dateStr;
-        currentLat = lat;
-        currentLng = lng;
-        currentLocName = locName;
+        const buttons = document.querySelectorAll('.day-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
 
-        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-        if (btnElement) btnElement.classList.add('active');
-
-        fetchLiveWeather();
+        document.getElementById(dayId).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    // 發送抓取 Open-Meteo 即時氣象 API 請求
-    async function fetchLiveWeather() {
-        const detailElem = document.getElementById('weather-detail');
-        const locElem = document.getElementById('location-name');
-        
-        locElem.innerHTML = `📍 當前地點：${currentLocName}`;
-        detailElem.innerHTML = '⏱️ 正在向日本氣象數據庫查詢最新預報...';
-
-        try {
-            // Open-Meteo API 網址 (包含每日最高/最低溫與降雨機率)
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLng}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FTokyo`;
-            
-            const response = await fetch(url);
-            const data = await response.json();
-
-            // 取得預報數據
-            const dates = data.daily.time;
-            const dateIndex = dates.indexOf(currentDate);
-
-            if (dateIndex !== -1) {
-                const maxTemp = data.daily.temperature_2m_max[dateIndex];
-                const minTemp = data.daily.temperature_2m_min[dateIndex];
-                const rainProb = data.daily.precipitation_probability_max[dateIndex];
-
-                detailElem.innerHTML = `最高溫：<strong>${maxTemp}°C</strong>｜最低溫：<strong>${minTemp}°C</strong>｜降雨機率：<strong>${rainProb}%</strong>`;
-            } else {
-                // 若超出 API 免費預報天數（通常預報 7~14 天內），顯示即時氣候說明
-                detailElem.innerHTML = `預報日尚未進入即時 14 天預報期，請於出發前一週點擊更新。`;
-            }
-        } catch (error) {
-            detailElem.innerHTML = `❌ 無法取得即時氣象數據，請檢查網路連線。`;
+    function toggleDone(checkbox) {
+        const cardTitle = checkbox.nextElementSibling.nextElementSibling;
+        if (checkbox.checked) {
+            cardTitle.classList.add('item-done');
+        } else {
+            cardTitle.classList.remove('item-done');
         }
     }
-
-    // 網頁首次載入時自動執行
-    window.onload = function() {
-        fetchLiveWeather();
-    };
 </script>
 
 </body>
