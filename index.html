@@ -100,8 +100,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            text-decoration: none; /* 移除超連結底線 */
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
+        .weather-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
         .weather-info {
             display: flex;
             flex-direction: column;
@@ -226,12 +233,13 @@
     <!-- Day 1 -->
     <div id="d1" class="day-content active">
         <div class="weather-card">
+        <a href="https://www.jma.go.jp/bosai/forecast/#area_type=class20s&area_code=2310000" target="_blank" class="weather-card">
             <div class="weather-info">
-                <span class="weather-title">🌤️ 日本氣象預測 - 名古屋地區</span>
-                <span class="weather-detail">氣溫：20°C ～ 27°C｜降雨機率：30%</span>
+                <span class="weather-title">🌤️ 日本氣象廳(JMA)預報 - 愛知縣/名古屋 ↗</span>
+                <span class="weather-detail">氣溫：20°C ～ 27°C｜降雨機率：30%（點擊看即時官方天氣）</span>
             </div>
             <div class="weather-icon">🌙</div>
-        </div>
+        </a>
 
         <div class="card">
             <div class="card-header">
@@ -322,7 +330,7 @@
             ⏱️ <strong>JR 東海道本線 平日時刻表（去回程）：</strong><br>
             <a href="東海道本線-金山-笠寺平日時刻表.pdf" target="_blank" class="btn-link btn-timetable">📑 去程：金山 ➔ 笠寺 時刻表 PDF</a>
             <a href="東海道本線-笠寺-金山平日時刻表.pdf" target="_blank" class="btn-link btn-timetable">📑 回程：笠寺 ➔ 金山/名古屋 時刻表 PDF</a>
-            <a href="https://railway.jr-central.co.jp/time/" target="_blank" class="btn-link" style="font-size:0.8rem;">🌐 JR 東海即時查詢</a>
+            <a href="https://railway.jr-central.co.jp/time-schedule/search/" target="_blank" class="btn-link" style="font-size:0.8rem;">🌐 JR 東海即時查詢</a>
         </div>
 
        <div class="card">
