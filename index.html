@@ -83,14 +83,19 @@
             margin: 16px 0 40px 0;
         }
 
+        /* 確保每日行程卡片由上而下單欄排列，恢復原本橫向寬版卡片 */
         .day-content {
             display: none;
+            width: 100%;
         }
 
         .day-content.active {
-            display: block;
+            display: flex;
+            flex-direction: column; /* 關鍵：由上往下單一直欄排列 */
+            width: 100%;
         }
 
+        /* 天氣卡片設定寬度 100% 與 box-sizing，防止被擠壓 */
         .weather-card {
             background: linear-gradient(135deg, #e0f7fa 0%, #fff3e0 100%);
             border: 1px solid #b2ebf2;
@@ -100,8 +105,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            text-decoration: none; /* 移除超連結底線 */
+            text-decoration: none;
             cursor: pointer;
+            width: 100%;
+            box-sizing: border-box; /* 確保 padding 不會撐出容器 */
             transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
@@ -130,12 +137,15 @@
             font-size: 1.8rem;
         }
 
+        /* 行程卡片同樣確保寬度 100% */
         .card {
             background-color: var(--card-bg);
             border-radius: var(--border-radius);
             padding: 16px;
             margin-bottom: 16px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .card-header {
@@ -236,7 +246,7 @@
         <a href="https://www.jma.go.jp/bosai/forecast/#area_type=class20s&area_code=2310000" target="_blank" class="weather-card">
             <div class="weather-info">
                 <span class="weather-title">🌤️ 日本氣象廳(JMA)預報 - 愛知縣/名古屋 ↗</span>
-                <span class="weather-detail">氣溫：20°C ～ 27°C｜降雨機率：30%（點擊看即時官方天氣）</span>
+                <span class="weather-detail">氣溫：20°C ～ 27°C｜降雨機率：30% </span>
             </div>
             <div class="weather-icon">🌙</div>
         </a>
@@ -269,13 +279,13 @@
 
     <!-- Day 2 -->
     <div id="d2" class="day-content">
-        <div class="weather-card">
+        <a href="https://www.jma.go.jp/bosai/forecast/#area_type=class20s&area_code=2310000" target="_blank" class="weather-card">
             <div class="weather-info">
-                <span class="weather-title">☀️ 日本氣象預測 - 名古屋地區</span>
-                <span class="weather-detail">氣溫：19°C ～ 26°C｜降雨機率：30%</span>
+                <span class="weather-title">☀️ 日本氣象廳(JMA)預報 - 愛知縣/名古屋 ↗</span>
+                <span class="weather-detail">氣溫：19°C ～ 26°C｜降雨機率：30% </span>
             </div>
             <div class="weather-icon">🌤️</div>
-        </div>
+        </a>
 
         <div class="card">
             <div class="card-header">
